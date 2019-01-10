@@ -130,7 +130,6 @@ behavior householder(mat m, mat *R, mat *Q)
         for (int k = 0; k < m->n && k < m->m - 1; k++) {
             double e[m->m], x[m->m], a;
             z1 = matrix_minor(z, k);
-            if (z != m) matrix_delete(z);
             z = z1;
 
             mcol(z, x, k);
@@ -144,21 +143,15 @@ behavior householder(mat m, mat *R, mat *Q)
             vdiv(e, vnorm(e, m->m), e, m->m);
             q[k] = vmul(e, m->m);
             z1 = matrix_mul(q[k], z);
-            if (z != m) matrix_delete(z);
             z = z1;
         }
-        matrix_delete(z);
         *Q = q[0];
         *R = matrix_mul(q[0], m);
         for (int i = 1; i < m->n && i < m->m - 1; i++) {
             z1 = matrix_mul(q[i], *Q);
-            if (i > 1) matrix_delete(*Q);
             *Q = z1;
-            matrix_delete(q[i]);
         }
-        matrix_delete(q[0]);
         z = matrix_mul(*Q, m);
-        matrix_delete(*R);
         *R = z;
         matrix_transpose(*Q);
     }
@@ -187,10 +180,6 @@ behavior Main {
         mat m = matrix_mul(Q, R);
         puts("Q * R"); matrix_show(m);
 
-        matrix_delete(x);
-        matrix_delete(R);
-        matrix_delete(Q);
-        matrix_delete(m);
         return 0;
     }
 }
